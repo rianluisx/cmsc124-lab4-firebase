@@ -3,12 +3,20 @@ import DeleteDialog from "./dialogs/DeleteDialog";
 import { useState } from "react";
 import EditDialog from "./dialogs/EditDialog";
 
-export default function TaskList({ tasks, onToggleTask, removeTask, editTask, undoDelete }) {
+export default function TaskList({ tasks, onToggleTask, removeTask, editTask, undoDelete, isFetching }) {
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenEditDialog, setIsOpenEditDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 
-  
+  if (isFetching){
+    return (
+      <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-10">
+        <div className="w-12 h-12 border-4 border-t-gray-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+
   if (tasks.length === 0) {
     return (
       <div className="p-4 text-center text-gray-500 text-xl">

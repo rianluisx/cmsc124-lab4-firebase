@@ -4,6 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function DeleteDialog({
@@ -13,12 +14,16 @@ export default function DeleteDialog({
   task,
   undoDelete,
 }) {
+
+  const [isDeleting, setIsDeleting] = useState(false);
+
   function cancelSubmit() {
     setIsOpenDialog(false);
   }
 
   async function handleRemoveTask(task) {
     try {
+      setIsDeleting(true);
       await removeTask(task.id);
       toast(`Deleted “${task.title}”`, {
         description: "You can undo this action",
@@ -31,6 +36,7 @@ export default function DeleteDialog({
         },
         variant: "destructive",
       });
+      setIsDeleting(false);
       setIsOpenDialog(false);
     } catch (error) {
       console.error(error);
@@ -44,6 +50,11 @@ export default function DeleteDialog({
           className="w-[40%] font-mono text-sm"
           aria-describedby={undefined}
         >
+          {isDeleting && (
+            <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-10">
+              <div className="w-12 h-12 border-4 border-t-blue-500 rounded-full animate-spin"></div>
+            </div>
+          )}
           <DialogHeader>
             <DialogTitle>Delete Task</DialogTitle>
           </DialogHeader>

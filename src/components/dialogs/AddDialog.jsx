@@ -1,4 +1,5 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,6 +8,8 @@ import {
 } from "@/components/ui/dialog";
 
 export default function AddDialog({ isOpenDialog, setIsOpenDialog, addTask }) {
+  const [isAdding, setIsAdding] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -30,8 +33,11 @@ export default function AddDialog({ isOpenDialog, setIsOpenDialog, addTask }) {
     };
 
     try {
+      setIsAdding(true);
       await addTask(newTask);
+      setIsAdding(false);
       setIsOpenDialog(false);
+
       reset();
     } catch (error) {
       console.error(error);
@@ -49,6 +55,12 @@ export default function AddDialog({ isOpenDialog, setIsOpenDialog, addTask }) {
         className="w-[65%] font-mono text-sm"
         aria-describedby={undefined}
       >
+        {isAdding && (
+          <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-10">
+            <div className="w-12 h-12 border-4 border-t-blue-500 rounded-full animate-spin"></div>
+          </div>
+        )}
+
         <DialogHeader className="items-center">
           <DialogTitle>Add a Task</DialogTitle>
         </DialogHeader>
@@ -61,12 +73,13 @@ export default function AddDialog({ isOpenDialog, setIsOpenDialog, addTask }) {
               className="border rounded px-2 py-1"
               {...register("title", {
                 required: "Title is required.",
-                validate: (value) =>
-                  value.trim() !== "",
+                validate: (value) => value.trim() !== "",
               })}
             />
             {isSubmitted && errors.title && (
-              <div className="text-red-500 text-sm">Title is required and shouldn't be empty.</div>
+              <div className="text-red-500 text-sm">
+                Title is required and shouldn't be empty.
+              </div>
             )}
 
             <label>Due Date</label>

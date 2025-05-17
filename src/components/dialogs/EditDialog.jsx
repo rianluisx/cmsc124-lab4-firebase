@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function EditDialog({
   isOpenDialog,
@@ -27,6 +27,8 @@ export default function EditDialog({
     },
   });
 
+  const [isEditing, setIsEditing] = useState(false)
+
   useEffect(() => {
     if (task) {
       reset({
@@ -40,11 +42,13 @@ export default function EditDialog({
 
   async function updateData(data) {
     try {
+      setIsEditing(true);
       await editTask({
         ...task,
         ...data,
         dateUpdated: new Date().toISOString(),
       });
+      setIsEditing(false);
       setIsOpenDialog(false);
     } catch (error) {
       console.error(error);
@@ -62,6 +66,12 @@ export default function EditDialog({
         className="w-[65%] font-mono text-sm"
         aria-describedby={undefined}
       >
+        {isEditing && (
+          <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center z-10">
+            <div className="w-12 h-12 border-4 border-t-blue-500 rounded-full animate-spin"></div>
+          </div>
+        )}
+
         <DialogHeader className="items-center">
           <DialogTitle>Edit Task</DialogTitle>
         </DialogHeader>
